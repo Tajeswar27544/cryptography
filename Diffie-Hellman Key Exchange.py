@@ -1,9 +1,8 @@
-#pip install cryptography before runnin the below
+#pip install cryptography #In the Terminal before running the below
 
 from cryptography.hazmat.primitives.asymmetric import dh
-from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.backends import default_backend
-import os
 
 # Step 1: Generate Parameters (Prime p and Generator g)
 def generate_parameters():
@@ -40,8 +39,18 @@ def main():
     alice_private_key, alice_public_key = alice_key_exchange(parameters)
     bob_private_key, bob_public_key = bob_key_exchange(parameters)
     
-    print("Alice's Public Key:", alice_public_key.public_bytes().hex())
-    print("Bob's Public Key:", bob_public_key.public_bytes().hex())
+    # Serialize and print public keys
+    alice_public_key_bytes = alice_public_key.public_bytes(
+        encoding=serialization.Encoding.PEM,
+        format=serialization.PublicFormat.SubjectPublicKeyInfo
+    )
+    bob_public_key_bytes = bob_public_key.public_bytes(
+        encoding=serialization.Encoding.PEM,
+        format=serialization.PublicFormat.SubjectPublicKeyInfo
+    )
+    
+    print("Alice's Public Key:\n", alice_public_key_bytes.decode())
+    print("Bob's Public Key:\n", bob_public_key_bytes.decode())
 
     # Step 3: Exchange public keys (simulate communication over insecure channel)
     # Alice computes the shared secret using her private key and Bob's public key
